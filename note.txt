@@ -1,0 +1,66 @@
+flutter emulators --launch apple_ios_simulator
+
+cd medical_learning_ai
+flutter run
+
+***
+vv01sam@gmail.com
+alicpubli@gmail.com
+
+***
+git add .
+git commit -m "移植開始"
+git push -u origin main
+git push -u origin new-development
+
+git push -f origin main
+
+git reset --hard d08c83c4774e421b46b6f153f33653dc7deadd23
+
+***
+flutter pub upgrade --major-versions
+
+***
+flutter pub get
+flutter pub run flutter_launcher_icons
+
+***
+flutter pub get
+flutter clean
+flutter pub get
+
+flutter build ios --release
+
+cd ios
+pod deintegrate
+pod install
+cd ..
+
+flutter build ios --release
+
+***
+firebase deploy --only firestore:rules
+
+npm install -g firebase-tools
+
+***
+apple審査用アカウント
+メールアドレス：aikatekyo@gmail.com
+ユーザー名: reviewer_2024
+パスワード: Rev!ew1234Secure
+
+***
+firebase deploy --only firestore:rules
+
+***
+# mainブランチにチェックアウト
+git checkout main
+
+# new-developmentブランチの状態を強制的にmainブランチに反映
+git reset --hard new-development
+
+# 変更をリモートリポジトリにプッシュ
+git push -f origin main
+
+***
+git clean -fd
