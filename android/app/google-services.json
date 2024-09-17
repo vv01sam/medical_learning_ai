@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "185764290891",
+    "project_id": "medical-learning-ai-e8032",
+    "storage_bucket": "medical-learning-ai-e8032.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185764290891:android:cd1fbdcf3ce565a780c8ce",
+        "android_client_info": {
+          "package_name": "com.medical_learning_ai.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFOk3TMeyaDFOiXeoTcIsTB92o-Ijdh04"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
