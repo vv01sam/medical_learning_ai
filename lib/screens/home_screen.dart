@@ -243,14 +243,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         title:
-            Image.asset('assets/images/fukuro_icon.png', height: 40), // アイコン変更
+            Image.asset('assets/images/medical_learning_ai.png', height: 40), // 変更箇所
         backgroundColor: Theme.of(context).colorScheme.background,
         elevation: 0,
       ),
       drawer: _buildDrawer(),
       backgroundColor: Colors.white,
       body: _isLoggingOut
-          ? Center(child: CupertinoActivityIndicator()) // ログアウト中にインジケーターを表示
+          ? Center(child: CupertinoActivityIndicator()) // ログアウ��中にインジケーターを表示
           : _currentUser == null || _progressTracker == null
               ? Center(child: CupertinoActivityIndicator())
               : LayoutBuilder(

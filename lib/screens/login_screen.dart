@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Hero(
                   tag: 'app_logo',
                   child: Image.asset(
-                    'assets/images/fukuro_icon.png',
+                    'assets/images/medical_learning_ai.png', // 変更箇所
                     height: 150,
                   ),
                 ),
