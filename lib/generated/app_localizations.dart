@@ -186,6 +186,11 @@ abstract class AppLocalizations {
   String get done;
 
   // ... 既存のコード ...
+
+  // Add this line
+  String get selectYourProfession;
+
+  // ... existing code ...
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -257,4 +257,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createYourOwnCourse => 'Create your own course'; // 既に追加済み
   @override
   String get createCourseDescription => 'Design a custom course tailored to your needs'; // 新しいプロパティ
+
+  @override
+  String get selectYourProfession => 'Select your profession';
 }

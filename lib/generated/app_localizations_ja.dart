@@ -54,7 +54,7 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get selectCourse => 'コースを選択してください';
   @override
-  String get waitingForNewCourses => '新しいコースが追加されるのをお��ちください';
+  String get waitingForNewCourses => '新しいコースが追加されるのをおちください';
   @override
   String get noDescription => '説明がありません';
   @override
@@ -214,7 +214,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get back => '戻る';
 
   @override
-  String get rememberMe => 'ログイン状態を保持';
+  String get rememberMe => 'ログイン状態を���持';
 
   @override
   String get deleteCourseTitle => 'コースの削除';
@@ -252,4 +252,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get createYourOwnCourse => '自分でコースを作成する'; // 既に追加済み
   @override
   String get createCourseDescription => 'あなたのニーズに合わせたカスタムコースを作成します'; // 新しいプロパティ
+
+  @override
+  String get selectYourProfession => 'あなたの職業を選択してください';
 }

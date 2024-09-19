@@ -21,21 +21,16 @@ class CreateCourseGeminiService {
   Future<Map<String, dynamic>> initiateConversation(String initialPrompt) async {
     final String apiKey = await _getApiKey();
     final content = [Content.text('''
-You are an AI assistant helping a user customize a learning course. The user is interested in creating a course for the following profession:
+You are an AI assistant dedicated to helping users customize their learning courses. The user is looking to create a course for the following profession:
 
 Profession: ${initialPrompt}
 
-Begin by greeting the user and asking questions to understand their goals, experience level, and specific needs. Use the following guidelines:
+Start the conversation with a warm greeting. Engage the user by asking open-ended questions to understand their goals, experience level, and specific needs. Ensure the dialogue flows naturally based on the user's responses.
 
-- Ask open-ended questions to understand the user's objectives.
-- Inquire about their current knowledge level.
-- Find out any specific topics they want to focus on.
-- After gathering enough information, summarize their needs and confirm before proceeding.
+Please avoid using bullet points or structured lists. Do not mention that you are an AI model. Keep the interaction conversational, engaging, and focused on the user's input.
 
-Do not mention that you are an AI model. Keep the conversation natural and user-focused.
-
-Start the conversation when ready.
-''')];
+Begin the conversation whenever you are ready.
+    ''')];
 
     final response = await _model.generateContent(content);
 
@@ -51,7 +46,11 @@ Start the conversation when ready.
 
   Future<String> sendMessage(String message) async {
     final String apiKey = await _getApiKey();
-    final content = [Content.text(message)];
+    final content = [Content.text('''
+${message}
+
+Please respond in a conversational manner, keeping your replies at a natural length suitable for a dialogue. Avoid overly long or overly brief responses.
+    ''')];
 
     final response = await _model.generateContent(content);
 
@@ -60,5 +59,34 @@ Start the conversation when ready.
     }
 
     return response.text!.trim();
+  }
+
+  /// 新しく追加するメソッド
+  Future<List<String>> generateSuggestedResponses(String aiQuestion) async {
+    final String apiKey = await _getApiKey();
+    final content = [Content.text('''
+Provide three concise and relevant responses to the following question as potential answers a user might give. Do not include any explanations.
+
+Question: "${aiQuestion}"
+Responses:
+1.
+2.
+3.
+''')];
+
+    final response = await _model.generateContent(content);
+
+    if (response.text == null) {
+      throw Exception('Failed to generate suggested responses');
+    }
+
+    // レスポンスを分割してリストに変換
+    List<String> responses = response.text!
+        .split('\n')
+        .where((line) => line.trim().isNotEmpty)
+        .map((line) => line.replaceFirst(RegExp(r'^\d+\.\s*'), ''))
+        .toList();
+
+    return responses;
   }
 }

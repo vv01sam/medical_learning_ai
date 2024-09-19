@@ -14,7 +14,7 @@ class CourseDetailScreen extends StatefulWidget {
 class _CourseDetailScreenState extends State<CourseDetailScreen> {
   final CreateCourseGeminiService _geminiService = CreateCourseGeminiService();
   final TextEditingController _controller = TextEditingController();
-  List<Map<String, String>> _messages = [];
+  List<Map<String, dynamic>> _messages = []; // Map<String, String> から Map<String, dynamic> に変更
   bool _isLoading = false;
 
   @override
@@ -34,6 +34,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       setState(() {
         _messages.add({'gemini': result['response']});
       });
+      // 提案された回答を生成
+      await _generateAndAddSuggestedResponses(result['response']);
     } catch (e) {
       // Handle error appropriately
       print(e);
@@ -57,6 +59,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       setState(() {
         _messages.add({'gemini': response});
       });
+      // 提案された回答を生成
+      await _generateAndAddSuggestedResponses(response);
     } catch (e) {
       // Handle error appropriately
       print(e);
@@ -72,24 +76,43 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     }
   }
 
-  Widget _buildMessage(Map<String, String> message) {
-    bool isUser = message.containsKey('user');
+  Future<void> _generateAndAddSuggestedResponses(String aiMessage) async {
+    try {
+      List<String> suggestions = await _geminiService.generateSuggestedResponses(aiMessage);
+      setState(() {
+        _messages.add({'suggestions': suggestions});
+      });
+    } catch (e) {
+      print('Failed to generate suggested responses: $e');
+      // Optional: You can handle the error by showing a message or ignoring
+    }
+  }
+
+  Widget _buildMessage(Map<String, dynamic> message) {
+    if (message.containsKey('user')) {
+      return _buildUserMessage(message['user']);
+    } else if (message.containsKey('gemini')) {
+      return _buildGeminiMessage(message['gemini']);
+    } else if (message.containsKey('suggestions')) {
+      return _buildSuggestedResponses(message['suggestions']);
+    } else {
+      return SizedBox.shrink();
+    }
+  }
+
+  Widget _buildUserMessage(String message) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Row(
-        mainAxisAlignment:
-            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!isUser) _buildAvatar(),
           SizedBox(width: 8),
           Flexible(
             child: Container(
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isUser
-                    ? Theme.of(context).colorScheme.primary.withOpacity(0.9)
-                    : Colors.grey[200],
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.9),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -100,17 +123,86 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                 ],
               ),
               child: Text(
-                isUser ? message['user']! : message['gemini']!,
+                message,
                 style: TextStyle(
-                  color: isUser ? Colors.white : Colors.black87,
+                  color: Colors.white,
                   fontSize: 16,
                 ),
               ),
             ),
           ),
           SizedBox(width: 8),
-          if (isUser) _buildAvatar(isUser: true),
+          _buildAvatar(isUser: true),
         ],
+      ),
+    );
+  }
+
+  Widget _buildGeminiMessage(String message) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildAvatar(),
+          SizedBox(width: 8),
+          Flexible(
+            child: Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 5,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Text(
+                message,
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSuggestedResponses(List<String> suggestions) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: suggestions.map((suggestion) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: ElevatedButton(
+              onPressed: () => _handleSubmit(suggestion),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Theme.of(context).colorScheme.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                  side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              ),
+              child: Text(
+                suggestion,
+                style: TextStyle(fontSize: 14),
+                textAlign: TextAlign.left,
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -120,7 +212,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       backgroundColor: isUser ? Colors.blue[100] : Colors.grey[300],
       radius: 20,
       child: Icon(
-        isUser ? Icons.person : Icons.android,
+        isUser ? Icons.person : Icons.person_search, // アイコンを変更
         color: isUser ? Colors.blue : Colors.grey[700],
         size: 24,
       ),
@@ -185,14 +277,15 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: Theme.of(context).colorScheme.primary),
               ),
               child: Row(
                 children: [
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Icon(Icons.message, color: Colors.grey[600]),
+                    child: Icon(Icons.message, color: Theme.of(context).colorScheme.primary),
                   ),
                   Expanded(
                     child: TextField(
@@ -202,6 +295,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         border: InputBorder.none,
                         hintStyle: TextStyle(color: Colors.grey[500]),
                       ),
+                      style: TextStyle(color: Theme.of(context).colorScheme.primary),
                       textInputAction: TextInputAction.send,
                       onSubmitted: _handleSubmit,
                     ),
@@ -213,7 +307,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
           SizedBox(width: 12),
           Container(
             decoration: BoxDecoration(
-              color: Color(0xFFF8A055), // tertiary color
+              color: Theme.of(context).colorScheme.primary,
               shape: BoxShape.circle,
             ),
             child: IconButton(
