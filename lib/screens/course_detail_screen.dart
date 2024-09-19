@@ -74,19 +74,39 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
 
   Widget _buildMessage(Map<String, String> message) {
     bool isUser = message.containsKey('user');
-    return Container(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      child: Container(
-        decoration: BoxDecoration(
-          color: isUser ? Colors.blueAccent : Colors.grey[300],
-          borderRadius: BorderRadius.circular(10),
-        ),
-        padding: EdgeInsets.all(10),
-        child: Text(
-          isUser ? message['user']! : message['gemini']!,
-          style: TextStyle(color: isUser ? Colors.white : Colors.black),
-        ),
+    return Padding(
+      padding: EdgeInsets.only(bottom: 16),
+      child: Row(
+        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          if (!isUser) _buildAvatar(),
+          SizedBox(width: 8),
+          Flexible(
+            child: Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isUser ? Theme.of(context).colorScheme.primary : Colors.grey[200],
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                isUser ? message['user']! : message['gemini']!,
+                style: TextStyle(color: isUser ? Colors.white : Colors.black87),
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+          if (isUser) _buildAvatar(isUser: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvatar({bool isUser = false}) {
+    return CircleAvatar(
+      backgroundColor: isUser ? Colors.blue[100] : Colors.grey[300],
+      child: Icon(
+        isUser ? Icons.person : Icons.android,
+        color: isUser ? Colors.blue : Colors.grey[700],
       ),
     );
   }
@@ -94,56 +114,79 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Course Details'),
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: _isLoading && _messages.isEmpty
-                  ? Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                      padding: EdgeInsets.all(10),
-                      itemCount: _messages.length,
-                      itemBuilder: (context, index) {
-                        return _buildMessage(_messages[index]);
-                      },
-                    ),
-            ),
-            Divider(height: 1),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              color: Colors.white,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      decoration:
-                          InputDecoration.collapsed(hintText: 'Send a message'),
-                      textInputAction: TextInputAction.send,
-                      onSubmitted: (value) {
-                        if (value.trim().isNotEmpty) {
-                          _sendMessage(value.trim());
-                          _controller.clear();
-                        }
-                      },
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.send),
-                    onPressed: () {
-                      String message = _controller.text.trim();
-                      if (message.isNotEmpty) {
-                        _sendMessage(message);
-                        _controller.clear();
-                      }
+      appBar: AppBar(
+        title: Text('Course Details'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: _isLoading && _messages.isEmpty
+                ? Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    padding: EdgeInsets.all(16),
+                    itemCount: _messages.length,
+                    itemBuilder: (context, index) {
+                      return _buildMessage(_messages[index]);
                     },
                   ),
-                ],
-              ),
-            ),
-          ],
-        ));
+          ),
+          _buildInputArea(),
+        ],
+      ),
+    );
   }
+
+  Widget _buildInputArea() {
+    return Container(
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                hintText: 'Type your message...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.grey[200],
+                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              ),
+              textInputAction: TextInputAction.send,
+              onSubmitted: _handleSubmit,
+            ),
+          ),
+          SizedBox(width: 8),
+          FloatingActionButton(
+            onPressed: () => _handleSubmit(_controller.text),
+            child: Icon(Icons.send),
+            mini: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleSubmit(String value) {
+    if (value.trim().isNotEmpty) {
+      _sendMessage(value.trim());
+      _controller.clear();
+    }
+  }
+
+  // ... existing methods ...
 }

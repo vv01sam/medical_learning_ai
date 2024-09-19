@@ -163,7 +163,8 @@ abstract class AppLocalizations {
   String get courseDeletedError;
 
   // 新しいプロパティ
-  String get createYourOwnCourse; // 新しいプロパティ
+  String get createYourOwnCourse; // 既に追加済み
+  String get createCourseDescription; // 新しいプロパティ
 
   // ... (既存のコードはそのまま)
 

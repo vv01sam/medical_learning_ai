@@ -54,7 +54,7 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get selectCourse => 'コースを選択してください';
   @override
-  String get waitingForNewCourses => '新しいコースが追加されるのをお待ちください';
+  String get waitingForNewCourses => '新しいコースが追加されるのをお��ちください';
   @override
   String get noDescription => '説明がありません';
   @override
@@ -249,5 +249,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get done => '完了';
 
   @override
-  String get createYourOwnCourse => '自分でコースを作成する';
+  String get createYourOwnCourse => '自分でコースを作成する'; // 既に追加済み
+  @override
+  String get createCourseDescription => 'あなたのニーズに合わせたカスタムコースを作成します'; // 新しいプロパティ
 }
