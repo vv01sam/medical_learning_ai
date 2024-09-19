@@ -4,6 +4,7 @@ import '../screens/personalized_screen.dart';
 import 'home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../generated/app_localizations.dart';
+import 'create_course_screen.dart'; // 新しい画面をインポート
 
 class CourseListScreen extends StatefulWidget {
   @override
@@ -99,7 +100,23 @@ class _CourseListScreenState extends State<CourseListScreen> {
       ),
       body: _courses.isEmpty
           ? _buildEmptyState()
-          : _buildCourseList(),
+          : Column( // ListView.builder を Column に変更
+              children: [
+                Expanded(child: _buildCourseList()),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CreateCourseScreen()),
+                      );
+                    },
+                    child: Text('Create your own course'), // 新しいボタン
+                  ),
+                ),
+              ],
+            ),
     );
   }
 

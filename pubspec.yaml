@@ -29,6 +29,7 @@ dependencies:
   intl: ^0.19.0
   shared_preferences: ^2.0.15 
   flutter_markdown: ^0.6.10  # この行を追加
+  http: ^0.13.5  # この行を追加
 
 dev_dependencies:
   flutter_test:
@@ -39,9 +40,9 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "/Users/vv01sam/workplace/katekyo/katekyo_flutter_app/assets/images/medical_learning_ai.png"
-  adaptive_icon_background: "#FFFFFF" # Android用の背景色を指定
-  adaptive_icon_foreground: "/Users/vv01sam/workplace/katekyo/katekyo_flutter_app/assets/images/medical_learning_ai.png" # Android用の前景アイコン
+  image_path: "assets/images/medical_learning_ai.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/medical_learning_ai.png"
 
 flutter:
   generate: true
