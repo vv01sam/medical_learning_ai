@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // QuerySnapshotのインポート
 import '../services/firestore_service.dart';
 import '../screens/personalized_screen.dart';
 import 'home_screen.dart';
@@ -23,7 +24,8 @@ class _CourseListScreenState extends State<CourseListScreen> {
 
   Future<void> _loadCourses() async {
     String language = Localizations.localeOf(context).languageCode;
-    List<Map<String, dynamic>> courses = await _firestoreService.getAllDecksForLanguage(language);
+    List<Map<String, dynamic>> courses =
+        await _firestoreService.getAllDecksForLanguage(language);
     setState(() {
       _courses = courses;
     });
@@ -56,7 +58,8 @@ class _CourseListScreenState extends State<CourseListScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(deck['description'] ?? AppLocalizations.of(context)!.noDescription),
+              Text(deck['description'] ??
+                  AppLocalizations.of(context)!.noDescription),
               SizedBox(height: 20),
               Text(AppLocalizations.of(context)!.addCourseQuestion),
             ],
@@ -89,6 +92,13 @@ class _CourseListScreenState extends State<CourseListScreen> {
     );
   }
 
+  void _navigateToCreateCourse() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreateCourseScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,25 +108,81 @@ class _CourseListScreenState extends State<CourseListScreen> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,
       ),
-      body: _courses.isEmpty
-          ? _buildEmptyState()
-          : Column( // ListView.builder を Column に変更
-              children: [
-                Expanded(child: _buildCourseList()),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => CreateCourseScreen()),
-                      );
-                    },
-                    child: Text('Create your own course'), // 新しいボタン
-                  ),
+      body: ListView(
+        children: [
+          // Create your own course card
+          Card(
+            margin: EdgeInsets.all(8.0),
+            child: InkWell(
+              onTap: _navigateToCreateCourse,
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Create your own course',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    SizedBox(height: 8.0),
+                    Text(
+                      'Design a custom course tailored to your needs',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
+          ),
+          // Existing courses
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection('courses').snapshots(), // streamパラメータを追加
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
+              var courses = snapshot.data!.docs;
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: courses.length,
+                itemBuilder: (context, index) {
+                  var course = courses[index];
+                  return Card(
+                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.all(16),
+                      leading: CircleAvatar(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary,
+                        child: Text(
+                          course['title'][0].toUpperCase(),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      title: Text(
+                        course['title'],
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(course['description'] ??
+                          AppLocalizations.of(context)!.noDescription),
+                      trailing: Icon(Icons.add_circle,
+                          color: Theme.of(context).colorScheme.primary),
+                      onTap: () => _showCourseDialog(course.data() as Map<String, dynamic>),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
+      // ... existing FAB code (if any) ...
     );
   }
 
@@ -136,6 +202,11 @@ class _CourseListScreenState extends State<CourseListScreen> {
           Text(
             AppLocalizations.of(context)!.waitingForNewCourses,
             style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _navigateToCreateCourse,
+            child: Text(AppLocalizations.of(context)!.createYourOwnCourse),
           ),
         ],
       ),
@@ -166,7 +237,8 @@ class _CourseListScreenState extends State<CourseListScreen> {
               deck['title'],
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: Text(deck['description'] ?? AppLocalizations.of(context)!.noDescription),
+            subtitle: Text(deck['description'] ??
+                AppLocalizations.of(context)!.noDescription),
             trailing: Icon(Icons.add_circle,
                 color: Theme.of(context).colorScheme.primary),
             onTap: () => _showCourseDialog(deck),

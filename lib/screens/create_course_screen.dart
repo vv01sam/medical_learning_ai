@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/create_course_gemini_service.dart';
-import '../services/medlm_service.dart';
+import 'course_detail_screen.dart'; // 新しいページをインポート
 
 class CreateCourseScreen extends StatefulWidget {
   @override
@@ -8,42 +7,46 @@ class CreateCourseScreen extends StatefulWidget {
 }
 
 class _CreateCourseScreenState extends State<CreateCourseScreen> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  bool _isCreating = false;
+  // Define the main categories and their submenus
+  final Map<String, List<String>> categories = {
+    'Medical Professionals': ['Doctor (Physician)', 'Dentist'],
+    'Nursing Professionals': ['Nurse', 'Midwife', 'Public Health Nurse'],
+    'Pharmacy and Nutrition': ['Pharmacist', 'Registered Dietitian (Nutritionist)'],
+    'Rehabilitation and Therapy': [
+      'Physical Therapist',
+      'Occupational Therapist',
+      'Speech-Language-Hearing Therapist',
+      'Prosthetist and Orthotist',
+      'Anma Massage Shiatsu Practitioner',
+      'Judo Therapist',
+      'Acupuncturist and Moxibustion Therapist'
+    ],
+    'Diagnostic and Support Technicians': [
+      'Clinical Laboratory Technician',
+      'Radiological Technologist',
+      'Clinical Engineer',
+      'Dental Hygienist',
+      'Dental Technician',
+      'Orthoptist',
+      'Emergency Medical Technician (EMT)'
+    ],
+    'Mental Health and Welfare': [
+      'Mental Health Social Worker',
+      'Certified Psychologist',
+      'Certified Care Worker'
+    ],
+  };
 
-  void _createCourse() async {
-    setState(() {
-      _isCreating = true;
+  // Track expanded categories
+  Map<String, bool> _expandedCategories = {};
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize all categories as collapsed
+    categories.keys.forEach((category) {
+      _expandedCategories[category] = false;
     });
-
-    String title = _titleController.text;
-    String description = _descriptionController.text;
-
-    try {
-      // AIエージェントによるコース内容の生成
-      var geminiService = CreateCourseGeminiService();
-      var courseData = await geminiService.generateCourseData(title, description, 'gemini-1.5-flash');
-
-      // コースをFirestoreに保存
-      var medlmService = MedlmService();
-      await medlmService.createCourse(courseData); // Stringを渡す
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Course created successfully')),
-      );
-
-      Navigator.pop(context);
-    } catch (e) {
-      print('Error creating course: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to create course')),
-      );
-    } finally {
-      setState(() {
-        _isCreating = false;
-      });
-    }
   }
 
   @override
@@ -52,27 +55,36 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
       appBar: AppBar(
         title: Text('Create Your Own Course'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _titleController,
-              decoration: InputDecoration(labelText: 'Course Title'),
-            ),
-            TextField(
-              controller: _descriptionController,
-              decoration: InputDecoration(labelText: 'Course Description'),
-            ),
-            SizedBox(height: 20),
-            _isCreating
-                ? CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _createCourse,
-                    child: Text('Create Course'),
-                  ),
-          ],
-        ),
+      body: ListView.builder(
+        itemCount: categories.length,
+        itemBuilder: (context, index) {
+          String category = categories.keys.elementAt(index);
+          return ExpansionTile(
+            title: Text(category),
+            children: categories[category]!.map((subCategory) {
+              return ListTile(
+                title: Text(subCategory),
+                onTap: () {
+                  // 職業がクリックされたら新しいページに移動
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CourseDetailScreen(
+                        category: category,
+                        profession: subCategory,
+                      ),
+                    ),
+                  );
+                },
+              );
+            }).toList(),
+            onExpansionChanged: (expanded) {
+              setState(() {
+                _expandedCategories[category] = expanded;
+              });
+            },
+          );
+        },
       ),
     );
   }

@@ -54,7 +54,7 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get selectCourse => 'コースを選択してください';
   @override
-  String get waitingForNewCourses => '新しいコースが追加され��のをお待ちください';
+  String get waitingForNewCourses => '新しいコースが追加されるのをお待ちください';
   @override
   String get noDescription => '説明がありません';
   @override
@@ -136,7 +136,7 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get showAnswer => '答えを見る';
   @override
-  String get retry => '���う一度';
+  String get retry => 'もう一度';
   @override
   String get difficult => '難しい';
   @override
@@ -168,7 +168,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get dataUsageContent =>
       '当社はあなたのデータを、パーソナライズされた学習体験の提供、進捗の追跡などに使用します...';
   @override
-  String get childrenPrivacyTitle => '子供のプ��イバシー';
+  String get childrenPrivacyTitle => '子供のプライバシー';
   @override
   String get childrenPrivacyContent => '当社は13歳未満の子供のプライバシー保護に努めています...';
   @override
@@ -231,7 +231,7 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get selectInterests => '興味のある分野を選択してください';
   @override
-  String get technology => 'テクノ��ジー';
+  String get technology => 'テクノロジー';
   @override
   String get business => 'ビジネス';
   @override
@@ -247,4 +247,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get done => '完了';
+
+  @override
+  String get createYourOwnCourse => '自分でコースを作成する';
 }

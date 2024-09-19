@@ -9,7 +9,7 @@ alicpubli@gmail.com
 
 ***
 git add .
-git commit -m "オリジナルコース機能基盤作成成功"
+git commit -m "オリジナルコース機能AIエージェント作成中"
 git push -u origin main
 git push -u origin new-development
 

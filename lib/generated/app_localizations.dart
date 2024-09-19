@@ -162,6 +162,9 @@ abstract class AppLocalizations {
   String get courseDeletedSuccess;
   String get courseDeletedError;
 
+  // 新しいプロパティ
+  String get createYourOwnCourse; // 新しいプロパティ
+
   // ... (既存のコードはそのまま)
 
   // cancel は既に定義されているため、ここでは追加しません
