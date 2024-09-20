@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/create_course_gemini_service.dart';
+import '../services/medlm_service.dart';
 
 class CourseDetailScreen extends StatefulWidget {
   final String category;
@@ -16,6 +17,11 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   final TextEditingController _controller = TextEditingController();
   List<Map<String, dynamic>> _messages = []; // Map<String, String> から Map<String, dynamic> に変更
   bool _isLoading = false;
+
+  // Add these variables
+  int _userResponseCount = 0;
+  List<String> _userResponses = [];
+  final MedlmService _medlmService = MedlmService();
 
   @override
   void initState() {
@@ -53,20 +59,57 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     setState(() {
       _messages.add({'user': message});
       _isLoading = true;
+      _userResponseCount++; // Increment the user response count
+      _userResponses.add(message); // Store the user's response
     });
     try {
       String response = await _geminiService.sendMessage(message);
       setState(() {
         _messages.add({'gemini': response});
       });
-      // 提案された回答を生成
+      // Generate suggested responses
       await _generateAndAddSuggestedResponses(response);
+
+      // Check if the user has responded twice
+      if (_userResponseCount >= 2) {
+        await _createCustomCourse(); // Create the custom course
+      }
+
     } catch (e) {
       // Handle error appropriately
       print(e);
       setState(() {
         _messages.add({
           'gemini': 'Sorry, there was an error processing your request.'
+        });
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  // Add this method to handle course creation
+  Future<void> _createCustomCourse() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      // Pass the user's responses to the MedlmService
+      await _medlmService.createCourse(_userResponses);
+      // Notify the user
+      setState(() {
+        _messages.add({
+          'gemini': 'Your custom course has been created and added to your courses!'
+        });
+      });
+    } catch (e) {
+      // Handle error
+      print('Error creating custom course: $e');
+      setState(() {
+        _messages.add({
+          'gemini': 'Sorry, there was an error creating your custom course.'
         });
       });
     } finally {
