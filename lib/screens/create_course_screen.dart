@@ -66,7 +66,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
           children: [
             Text(
               AppLocalizations.of(context)!.selectYourProfession, // Localized text
-              style: Theme.of(context).textTheme.headlineLarge,
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.black54), // Match AppBar text style
             ),
             SizedBox(height: 16),
             ...categories.entries.map((entry) => _buildCategoryExpansionTile(entry.key, entry.value)),
@@ -86,14 +86,18 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
         child: ExpansionTile(
           title: Text(
             category,
-            style: Theme.of(context).textTheme.titleLarge,
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(
+              color: Colors.black54,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           children: professions.map((profession) => ListTile(
             title: Text(
               profession,
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                color: Colors.black54,
+              ),
             ),
-            trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).colorScheme.secondary),
             onTap: () {
               Navigator.push(
                 context,

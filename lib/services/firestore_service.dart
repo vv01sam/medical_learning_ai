@@ -665,7 +665,7 @@ class FirestoreService {
         Map<String, dynamic> progressData = progressTrackerSnapshot.data() as Map<String, dynamic>;
         Map<String, int> cardStatusData = Map<String, int>.from(progressData['cardStatusData'] ?? {});
         
-        // 削除されたカードの数を各ステータスから減算
+        // 削除されたカードの数を各テータスから減算
         cardStatusData.forEach((key, value) {
           cardStatusData[key] = (value - cardSnapshot.docs.length) > 0 ? value - cardSnapshot.docs.length : 0;
         });
@@ -750,5 +750,37 @@ class FirestoreService {
 
   String generateCardDocumentId(String userId, String cardId) {
     return '${userId}_$cardId';
+  }
+
+  // Save cards to the 'decks/{deckId}/cards' collection
+  Future<void> saveCardsToDeck(String deckId, List<CardModel> cards) async {
+    try {
+      const int batchSize = 500; // Firestore's batch limit
+      for (int i = 0; i < cards.length; i += batchSize) {
+        final batch = _db.batch();
+        final batchCards = cards.skip(i).take(batchSize);
+
+        for (var card in batchCards) {
+          if (card.id == null || card.id.isEmpty) {
+            print('ERROR: Card ID is null or empty. Skipping card.');
+            continue; // Skip invalid cards
+          }
+
+          DocumentReference cardRef = _db
+              .collection('decks')
+              .doc(deckId)
+              .collection('cards')
+              .doc(card.id);
+
+          batch.set(cardRef, card.toMap(), SetOptions(merge: true));
+        }
+
+        await batch.commit();
+        print('DEBUG: Successfully saved batch of cards to deck');
+      }
+    } catch (e) {
+      print('ERROR: Error saving cards to deck: $e');
+      throw e;
+    }
   }
 }
