@@ -63,13 +63,14 @@ class MedlmService {
     String userId = firebase_auth.FirebaseAuth.instance.currentUser!.uid;
 
     // Add the course to the user's list of courses
-    await _firestoreService.addCourseToUser(userId, {
-      'id': courseMetadata['course_id'],
-      'deckId': courseMetadata['deck_id'],
-      'title': courseMetadata['title'],
-      'description': courseMetadata['description'],
-      'language': courseMetadata['language'],
-    });
+    // この部分を削除
+    // await _firestoreService.addCourseToUser(userId, {
+    //   'id': courseMetadata['course_id'],
+    //   'deckId': courseMetadata['deck_id'],
+    //   'title': courseMetadata['title'],
+    //   'description': courseMetadata['description'],
+    //   'language': courseMetadata['language'],
+    // });
 
     // Save the cards to the deck
     await _firestoreService.saveCardsToDeck(courseMetadata['deck_id'], cards);
