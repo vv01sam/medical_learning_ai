@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // QuerySnapshotのインポート
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/firestore_service.dart';
 import '../screens/personalized_screen.dart';
 import 'home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../generated/app_localizations.dart';
-import 'create_course_screen.dart'; // 新しい画面をインポート
+import 'create_course_screen.dart';
 
 class CourseListScreen extends StatefulWidget {
   @override
@@ -133,7 +133,7 @@ class _CourseListScreenState extends State<CourseListScreen> {
           ),
           // Existing courses
           StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('courses').snapshots(), // streamパラメータを追加
+            stream: FirebaseFirestore.instance.collection('decks').snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(child: CircularProgressIndicator());

@@ -70,9 +70,11 @@ class MedlmService {
       'language': courseMetadata['language'],
     });
 
-    // Save the cards to the deck and user's progress
+    // Save the cards to the deck
     await _firestoreService.saveCardsToDeck(courseMetadata['deck_id'], cards);
-    await _firestoreService.savePersonalizedCardsToUserProgress(userId, courseMetadata['deck_id'], cards);
+
+    // user_progressコレクションへの追加を削除
+    // await _firestoreService.savePersonalizedCardsToUserProgress(userId, courseMetadata['deck_id'], cards);
   }
 
   // Method to generate course metadata
@@ -144,6 +146,9 @@ Begin output:
       // Execute batch requests in parallel
       List<Map<String, dynamic>> batchCards = await Future.wait(batchRequests);
       cards.addAll(batchCards);
+
+      // Add delay to avoid exceeding quota
+      await Future.delayed(Duration(seconds: 5));
     }
 
     return cards;
