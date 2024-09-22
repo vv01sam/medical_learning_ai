@@ -42,20 +42,21 @@ class MedlmService {
     Map<String, dynamic> courseMetadata = await _generateCourseMetadata(userResponses);
 
     // Generate cards in batches
-    List<Map<String, dynamic>> cards = await _generateCourseCards(
+    List<Map<String, dynamic>> cardsData = await _generateCourseCards(
       userResponses,
       _numberOfCards,
     );
 
-    // Combine course metadata and cards
-    courseMetadata['cards'] = cards;
-
-    // Print the complete course data
-    print('Complete course data:');
-    print(jsonEncode(courseMetadata));
+    // Assign unique IDs to cards and create CardModel instances
+    List<CardModel> cards = [];
+    for (var cardData in cardsData) {
+      String cardId = _firestoreService.generateDocumentId('cards');
+      CardModel card = CardModel.fromMap(cardId, courseMetadata['deck_id'], cardData);
+      cards.add(card);
+    }
 
     // Save the course to Firestore
-    await saveCourse(courseMetadata);
+    await _firestoreService.saveCourse(courseMetadata);
 
     // Get current user ID
     String userId = firebase_auth.FirebaseAuth.instance.currentUser!.uid;
@@ -69,8 +70,9 @@ class MedlmService {
       'language': courseMetadata['language'],
     });
 
-    // Save the personalized cards to user's progress
-    await _savePersonalizedCards(userId, courseMetadata);
+    // Save the cards to the deck and user's progress
+    await _firestoreService.saveCardsToDeck(courseMetadata['deck_id'], cards);
+    await _firestoreService.savePersonalizedCardsToUserProgress(userId, courseMetadata['deck_id'], cards);
   }
 
   // Method to generate course metadata
@@ -117,6 +119,10 @@ Begin output:
     // Parse the JSON string into a Map
     String jsonString = _extractJson(response.text!.trim());
     Map<String, dynamic> courseMetadata = jsonDecode(jsonString);
+
+    // Ensure unique IDs
+    courseMetadata['deck_id'] ??= 'custom_course_${DateTime.now().millisecondsSinceEpoch}';
+    courseMetadata['course_id'] ??= 'course_${DateTime.now().millisecondsSinceEpoch}';
 
     return courseMetadata;
   }

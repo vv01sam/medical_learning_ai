@@ -783,4 +783,13 @@ class FirestoreService {
       throw e;
     }
   }
+
+  // Save the course to Firestore
+  Future<void> saveCourse(Map<String, dynamic> courseMap) async {
+    // Save the course data to the 'decks' collection
+    Map<String, dynamic> courseData = Map.from(courseMap);
+    courseData.remove('cards'); // Remove cards before saving course metadata
+    await _db.collection('decks').doc(courseMap['deck_id']).set(courseData);
+    print('DEBUG: Course saved with deck_id: ${courseMap['deck_id']}');
+  }
 }

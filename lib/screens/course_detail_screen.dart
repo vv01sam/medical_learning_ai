@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/create_course_gemini_service.dart';
 import '../services/medlm_service.dart';
+import 'course_list_screen.dart'; // CourseListScreenをインポート
 
 class CourseDetailScreen extends StatefulWidget {
   final String category;
@@ -15,15 +16,13 @@ class CourseDetailScreen extends StatefulWidget {
 class _CourseDetailScreenState extends State<CourseDetailScreen> {
   final CreateCourseGeminiService _geminiService = CreateCourseGeminiService();
   final TextEditingController _controller = TextEditingController();
-  List<Map<String, dynamic>> _messages = []; // Map<String, String> から Map<String, dynamic> に変更
+  List<Map<String, dynamic>> _messages = [];
   bool _isLoading = false;
 
-  // Add these variables
   int _userResponseCount = 0;
   List<String> _userResponses = [];
   final MedlmService _medlmService = MedlmService();
 
-  // カスタムコースが作成されたかどうかを示すフラグ
   bool _isCourseCreated = false;
 
   @override
@@ -43,10 +42,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       setState(() {
         _messages.add({'gemini': result['response']});
       });
-      // 提案された回答を生成
       await _generateAndAddSuggestedResponses(result['response']);
     } catch (e) {
-      // Handle error appropriately
       print(e);
       setState(() {
         _messages.add({'gemini': 'Sorry, there was an error starting the conversation.'});
@@ -59,30 +56,26 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   }
 
   Future<void> _sendMessage(String message) async {
-    // カスタムコースが既に作成されている場合は処理を行わない
     if (_isCourseCreated) return;
 
     setState(() {
       _messages.add({'user': message});
       _isLoading = true;
-      _userResponseCount++; // Increment the user response count
-      _userResponses.add(message); // Store the user's response
+      _userResponseCount++;
+      _userResponses.add(message);
     });
     try {
-      // Check if the user has responded twice
       if (_userResponseCount >= 2) {
-        await _createCustomCourse(); // Create the custom course
-        return; // 以降の処理を行わない
+        await _createCustomCourse();
+        return;
       }
 
       String response = await _geminiService.sendMessage(message);
       setState(() {
         _messages.add({'gemini': response});
       });
-      // Generate suggested responses
       await _generateAndAddSuggestedResponses(response);
     } catch (e) {
-      // Handle error appropriately
       print(e);
       setState(() {
         _messages.add({
@@ -96,23 +89,22 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     }
   }
 
-  // Add this method to handle course creation
   Future<void> _createCustomCourse() async {
     setState(() {
       _isLoading = true;
     });
     try {
-      // Pass the user's responses to the MedlmService
       await _medlmService.createCourse(_userResponses);
-      // カスタムコース作成フラグを設定
       setState(() {
         _isCourseCreated = true;
         _messages.add({
           'gemini': 'Your custom course has been created and added to your courses!'
         });
+        _messages.add({
+          'navigateButton': 'View Course List'
+        });
       });
     } catch (e) {
-      // Handle error
       print('Error creating custom course: $e');
       setState(() {
         _messages.add({
@@ -134,7 +126,6 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       });
     } catch (e) {
       print('Failed to generate suggested responses: $e');
-      // Optional: You can handle the error by showing a message or ignoring
     }
   }
 
@@ -145,6 +136,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       return _buildGeminiMessage(message['gemini']);
     } else if (message.containsKey('suggestions')) {
       return _buildSuggestedResponses(message['suggestions']);
+    } else if (message.containsKey('navigateButton')) {
+      return _buildNavigateButton(message['navigateButton']);
     } else {
       return SizedBox.shrink();
     }
@@ -257,12 +250,33 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     );
   }
 
+  Widget _buildNavigateButton(String buttonText) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CourseListScreen()),
+          );
+        },
+        child: Text(buttonText),
+        style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: Colors.white,
+        ),
+      ),
+    );
+  }
+
   Widget _buildAvatar({bool isUser = false}) {
     return CircleAvatar(
       backgroundColor: isUser ? Colors.blue[100] : Colors.grey[300],
       radius: 20,
       child: Icon(
-        isUser ? Icons.person : Icons.person_search, // アイコンを変更
+        isUser ? Icons.person : Icons.person_search,
         color: isUser ? Colors.blue : Colors.grey[700],
         size: 24,
       ),
