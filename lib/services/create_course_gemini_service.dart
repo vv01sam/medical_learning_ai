@@ -18,7 +18,7 @@ class CreateCourseGeminiService {
     }
   }
 
-  Future<Map<String, dynamic>> initiateConversation(String initialPrompt) async {
+  Future<Map<String, dynamic>> initiateConversation(String initialPrompt, String language) async {
     final String apiKey = await _getApiKey();
     final content = [Content.text('''
       You are an AI assistant helping users customize their learning courses. The user wants to create a course for:
@@ -29,7 +29,7 @@ class CreateCourseGeminiService {
       
       Avoid lists, bullet points, and mentioning you are an AI. Keep interactions engaging and concise.
       
-      Start the conversation.
+      Start the conversation in ${language}.
     ''')];
 
     final response = await _model.generateContent(content);
@@ -43,12 +43,12 @@ class CreateCourseGeminiService {
     };
   }
 
-  Future<String> sendMessage(String message) async {
+  Future<String> sendMessage(String message, String language) async {
     final String apiKey = await _getApiKey();
     final content = [Content.text('''
 ${message}
 
-Please respond in a conversational manner, keeping your replies at a natural length suitable for a dialogue. Avoid overly long or overly brief responses.
+Please respond in a conversational manner, keeping your replies at a natural length suitable for a dialogue. Avoid overly long or overly brief responses. Respond in ${language}.
     ''')];
 
     final response = await _model.generateContent(content);
@@ -61,13 +61,13 @@ Please respond in a conversational manner, keeping your replies at a natural len
   }
 
   /// 新しく追加するメソッド
-  Future<List<String>> generateSuggestedResponses(String aiQuestion) async {
+  Future<List<String>> generateSuggestedResponses(String aiQuestion, String language) async {
     final String apiKey = await _getApiKey();
     final content = [Content.text('''
 Provide three concise and relevant responses to the following question as potential answers a user might give. Do not include any explanations.
 
 Question: "${aiQuestion}"
-Responses:
+Responses (in ${language}):
 1.
 2.
 3.

@@ -191,6 +191,50 @@ abstract class AppLocalizations {
   String get selectYourProfession;
 
   // ... existing code ...
+
+  // 新しいプロパティ
+  String get doctor;
+  String get dentist;
+  String get nurse;
+  String get midwife;
+  String get publicHealthNurse;
+  String get pharmacist;
+  String get registeredDietitian;
+  String get physicalTherapist;
+  String get occupationalTherapist;
+  String get speechLanguageHearingTherapist;
+  String get prosthetistAndOrthotist;
+  String get anmaMassageShiatsuPractitioner;
+  String get judoTherapist;
+  String get acupuncturistAndMoxibustionTherapist;
+  String get clinicalLaboratoryTechnician;
+  String get radiologicalTechnologist;
+  String get clinicalEngineer;
+  String get dentalHygienist;
+  String get dentalTechnician;
+  String get orthoptist;
+  String get emergencyMedicalTechnician;
+  String get mentalHealthSocialWorker;
+  String get certifiedPsychologist;
+  String get certifiedCareWorker;
+
+  // ... existing code ...
+
+  // 新しいプロパティ
+  String get medicalProfessionals;
+  String get nursingProfessionals;
+  String get pharmacyAndNutrition;
+  String get rehabilitationAndTherapy;
+  String get diagnosticAndSupportTechnicians;
+  String get mentalHealthAndWelfare;
+
+  // ... existing code ...
+
+  // 新しく追加するプロパティ
+  String get courseCreatedMessage;
+  String get viewCourseListButton;
+
+  // ... 既存のコード ...
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

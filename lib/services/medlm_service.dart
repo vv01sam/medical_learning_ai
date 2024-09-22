@@ -37,14 +37,15 @@ class MedlmService {
   }
 
   // Method to create a custom course using the model
-  Future<void> createCourse(List<String> userResponses) async {
+  Future<void> createCourse(List<String> userResponses, String language) async {
     // Generate course metadata
-    Map<String, dynamic> courseMetadata = await _generateCourseMetadata(userResponses);
+    Map<String, dynamic> courseMetadata = await _generateCourseMetadata(userResponses, language);
 
     // Generate cards in batches
     List<Map<String, dynamic>> cardsData = await _generateCourseCards(
       userResponses,
       _numberOfCards,
+      language,
     );
 
     // Assign unique IDs to cards and create CardModel instances
@@ -78,7 +79,7 @@ class MedlmService {
   }
 
   // Method to generate course metadata
-  Future<Map<String, dynamic>> _generateCourseMetadata(List<String> userResponses) async {
+  Future<Map<String, dynamic>> _generateCourseMetadata(List<String> userResponses, String language) async {
     String userNeeds = userResponses.join(' ');
 
     final content = [
@@ -95,7 +96,7 @@ Course metadata structure:
     "deck_id": "<unique_deck_id>",
     "title": "<Course Title>",
     "description": "<Course Description>",
-    "language": "en",
+    "language": "${language}",
     "course_id": "<unique_course_id>"
 }
 
@@ -131,7 +132,7 @@ Begin output:
 
   // Method to generate course cards in batches
   Future<List<Map<String, dynamic>>> _generateCourseCards(
-      List<String> userResponses, int numberOfCards) async {
+      List<String> userResponses, int numberOfCards, String language) async {
     List<Map<String, dynamic>> cards = [];
     int batchSize = 5; // Adjust batch size as needed
 
@@ -140,7 +141,7 @@ Begin output:
       List<Future<Map<String, dynamic>>> batchRequests = [];
 
       for (int j = 0; j < currentBatchSize; j++) {
-        batchRequests.add(_generateCourseCard(userResponses, i + j + 1));
+        batchRequests.add(_generateCourseCard(userResponses, i + j + 1, language));
       }
 
       // Execute batch requests in parallel
@@ -156,7 +157,7 @@ Begin output:
 
   // Method to generate a single course card
   Future<Map<String, dynamic>> _generateCourseCard(
-      List<String> userResponses, int cardNumber) async {
+      List<String> userResponses, int cardNumber, String language) async {
     String userNeeds = userResponses.join(' ');
 
     final content = [
@@ -190,6 +191,7 @@ Instructions:
 - The question should be relevant to the user's inputs.
 - The explanation should be clear and evidence-based.
 - Output only the JSON data, without any additional text or explanations.
+- The content must be in the specified language (${language}).
 
 Begin output:
 '''),

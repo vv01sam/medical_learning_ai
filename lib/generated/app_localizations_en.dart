@@ -254,10 +254,78 @@ class AppLocalizationsEn extends AppLocalizations {
   String get done => 'Done';
 
   @override
-  String get createYourOwnCourse => 'Create your own course'; // 既に追加済み
+  String get createYourOwnCourse => 'Create your own course';
   @override
-  String get createCourseDescription => 'Design a custom course tailored to your needs'; // 新しいプロパティ
+  String get createCourseDescription => 'Design a custom course tailored to your needs';
 
   @override
   String get selectYourProfession => 'Select your profession';
+
+  @override
+  String get doctor => 'Doctor (Physician)';
+  @override
+  String get dentist => 'Dentist';
+  @override
+  String get nurse => 'Nurse';
+  @override
+  String get midwife => 'Midwife';
+  @override
+  String get publicHealthNurse => 'Public Health Nurse';
+  @override
+  String get pharmacist => 'Pharmacist';
+  @override
+  String get registeredDietitian => 'Registered Dietitian (Nutritionist)';
+  @override
+  String get physicalTherapist => 'Physical Therapist';
+  @override
+  String get occupationalTherapist => 'Occupational Therapist';
+  @override
+  String get speechLanguageHearingTherapist => 'Speech-Language-Hearing Therapist';
+  @override
+  String get prosthetistAndOrthotist => 'Prosthetist and Orthotist';
+  @override
+  String get anmaMassageShiatsuPractitioner => 'Anma Massage Shiatsu Practitioner';
+  @override
+  String get judoTherapist => 'Judo Therapist';
+  @override
+  String get acupuncturistAndMoxibustionTherapist => 'Acupuncturist and Moxibustion Therapist';
+  @override
+  String get clinicalLaboratoryTechnician => 'Clinical Laboratory Technician';
+  @override
+  String get radiologicalTechnologist => 'Radiological Technologist';
+  @override
+  String get clinicalEngineer => 'Clinical Engineer';
+  @override
+  String get dentalHygienist => 'Dental Hygienist';
+  @override
+  String get dentalTechnician => 'Dental Technician';
+  @override
+  String get orthoptist => 'Orthoptist';
+  @override
+  String get emergencyMedicalTechnician => 'Emergency Medical Technician (EMT)';
+  @override
+  String get mentalHealthSocialWorker => 'Mental Health Social Worker';
+  @override
+  String get certifiedPsychologist => 'Certified Psychologist';
+  @override
+  String get certifiedCareWorker => 'Certified Care Worker';
+
+  @override
+  String get medicalProfessionals => 'Medical Professionals';
+  @override
+  String get nursingProfessionals => 'Nursing Professionals';
+  @override
+  String get pharmacyAndNutrition => 'Pharmacy and Nutrition';
+  @override
+  String get rehabilitationAndTherapy => 'Rehabilitation and Therapy';
+  @override
+  String get diagnosticAndSupportTechnicians => 'Diagnostic and Support Technicians';
+  @override
+  String get mentalHealthAndWelfare => 'Mental Health and Welfare';
+
+  @override
+  String get courseCreatedMessage => 'Your custom course has been created and added to your courses!';
+  @override
+  String get viewCourseListButton => 'View Course List';
+
 }

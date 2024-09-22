@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import '../services/create_course_gemini_service.dart';
 import '../services/medlm_service.dart';
 import 'course_list_screen.dart'; // CourseListScreenをインポート
+import '../generated/app_localizations.dart'; // ローカライズをインポート
 
 class CourseDetailScreen extends StatefulWidget {
   final String category;
   final String profession;
+  final String language; // 言語を追加
 
-  CourseDetailScreen({required this.category, required this.profession});
+  CourseDetailScreen({required this.category, required this.profession, required this.language});
 
   @override
   _CourseDetailScreenState createState() => _CourseDetailScreenState();
@@ -38,7 +40,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     try {
       String initialPrompt =
           'I am interested in creating a course for ${widget.profession} under the category of ${widget.category}. I would like your assistance to customize this course based on my specific needs.';
-      var result = await _geminiService.initiateConversation(initialPrompt);
+      var result = await _geminiService.initiateConversation(initialPrompt, widget.language);
       setState(() {
         _messages.add({'gemini': result['response']});
       });
@@ -70,7 +72,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
         return;
       }
 
-      String response = await _geminiService.sendMessage(message);
+      String response = await _geminiService.sendMessage(message, widget.language);
       setState(() {
         _messages.add({'gemini': response});
       });
@@ -94,14 +96,14 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       _isLoading = true;
     });
     try {
-      await _medlmService.createCourse(_userResponses);
+      await _medlmService.createCourse(_userResponses, widget.language);
       setState(() {
         _isCourseCreated = true;
         _messages.add({
-          'gemini': 'Your custom course has been created and added to your courses!'
+          'gemini': AppLocalizations.of(context)!.courseCreatedMessage // ローカライズされたメッセージ
         });
         _messages.add({
-          'navigateButton': 'View Course List'
+          'navigateButton': AppLocalizations.of(context)!.viewCourseListButton // ローカライズされたボタンテキスト
         });
       });
     } catch (e) {
@@ -120,7 +122,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
 
   Future<void> _generateAndAddSuggestedResponses(String aiMessage) async {
     try {
-      List<String> suggestions = await _geminiService.generateSuggestedResponses(aiMessage);
+      List<String> suggestions = await _geminiService.generateSuggestedResponses(aiMessage, widget.language);
       setState(() {
         _messages.add({'suggestions': suggestions});
       });

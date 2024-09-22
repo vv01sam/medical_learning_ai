@@ -54,7 +54,7 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get selectCourse => 'コースを選択してください';
   @override
-  String get waitingForNewCourses => '新しいコースが追加されるのをおちください';
+  String get waitingForNewCourses => '新しいコースが追加されるのをお待ちください';
   @override
   String get noDescription => '説明がありません';
   @override
@@ -214,7 +214,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get back => '戻る';
 
   @override
-  String get rememberMe => 'ログイン状態を���持';
+  String get rememberMe => 'ログイン状態を維持';
 
   @override
   String get deleteCourseTitle => 'コースの削除';
@@ -255,4 +255,72 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get selectYourProfession => 'あなたの職業を選択してください';
+
+  // 新しいプロパティ
+  @override
+  String get doctor => '医師';
+  @override
+  String get dentist => '歯科医師';
+  @override
+  String get nurse => '看護師';
+  @override
+  String get midwife => '助産師';
+  @override
+  String get publicHealthNurse => '保健師';
+  @override
+  String get pharmacist => '薬剤師';
+  @override
+  String get registeredDietitian => '管理栄養士';
+  @override
+  String get physicalTherapist => '理学療法士';
+  @override
+  String get occupationalTherapist => '作業療法士';
+  @override
+  String get speechLanguageHearingTherapist => '言語聴覚士';
+  @override
+  String get prosthetistAndOrthotist => '義肢装具士';
+  @override
+  String get anmaMassageShiatsuPractitioner => 'あん摩マッサージ指圧師';
+  @override
+  String get judoTherapist => '柔道整復師';
+  @override
+  String get acupuncturistAndMoxibustionTherapist => '鍼灸師';
+  @override
+  String get clinicalLaboratoryTechnician => '臨床検査技師';
+  @override
+  String get radiologicalTechnologist => '診療放射線技師';
+  @override
+  String get clinicalEngineer => '臨床工学技士';
+  @override
+  String get dentalHygienist => '歯科衛生士';
+  @override
+  String get dentalTechnician => '歯科技工士';
+  @override
+  String get orthoptist => '視能訓練士';
+  @override
+  String get emergencyMedicalTechnician => '救急救命士';
+  @override
+  String get mentalHealthSocialWorker => '精神保健福祉士';
+  @override
+  String get certifiedPsychologist => '公認心理師';
+  @override
+  String get certifiedCareWorker => '介護福祉士';
+
+  @override
+  String get medicalProfessionals => '医療専門職';
+  @override
+  String get nursingProfessionals => '看護専門職';
+  @override
+  String get pharmacyAndNutrition => '薬学と栄養';
+  @override
+  String get rehabilitationAndTherapy => 'リハビリテーションと治療';
+  @override
+  String get diagnosticAndSupportTechnicians => '診断と支援技術者';
+  @override
+  String get mentalHealthAndWelfare => 'メンタルヘルスと福祉';
+
+  @override
+  String get courseCreatedMessage => 'カスタムコースが作成され、コース一覧に追加されました！';
+  @override
+  String get viewCourseListButton => 'コース一覧を見る';
 }

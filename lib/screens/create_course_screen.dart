@@ -8,40 +8,50 @@ class CreateCourseScreen extends StatefulWidget {
 }
 
 class _CreateCourseScreenState extends State<CreateCourseScreen> {
-  final Map<String, List<String>> categories = {
-    'Medical Professionals': ['Doctor (Physician)', 'Dentist'],
-    'Nursing Professionals': ['Nurse', 'Midwife', 'Public Health Nurse'],
-    'Pharmacy and Nutrition': ['Pharmacist', 'Registered Dietitian (Nutritionist)'],
-    'Rehabilitation and Therapy': [
-      'Physical Therapist',
-      'Occupational Therapist',
-      'Speech-Language-Hearing Therapist',
-      'Prosthetist and Orthotist',
-      'Anma Massage Shiatsu Practitioner',
-      'Judo Therapist',
-      'Acupuncturist and Moxibustion Therapist'
-    ],
-    'Diagnostic and Support Technicians': [
-      'Clinical Laboratory Technician',
-      'Radiological Technologist',
-      'Clinical Engineer',
-      'Dental Hygienist',
-      'Dental Technician',
-      'Orthoptist',
-      'Emergency Medical Technician (EMT)'
-    ],
-    'Mental Health and Welfare': [
-      'Mental Health Social Worker',
-      'Certified Psychologist',
-      'Certified Care Worker'
-    ],
-  };
-
   String? selectedCategory;
   String? selectedProfession;
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, List<String>> categories = {
+      AppLocalizations.of(context)!.medicalProfessionals: [
+        AppLocalizations.of(context)!.doctor,
+        AppLocalizations.of(context)!.dentist
+      ],
+      AppLocalizations.of(context)!.nursingProfessionals: [
+        AppLocalizations.of(context)!.nurse,
+        AppLocalizations.of(context)!.midwife,
+        AppLocalizations.of(context)!.publicHealthNurse
+      ],
+      AppLocalizations.of(context)!.pharmacyAndNutrition: [
+        AppLocalizations.of(context)!.pharmacist,
+        AppLocalizations.of(context)!.registeredDietitian
+      ],
+      AppLocalizations.of(context)!.rehabilitationAndTherapy: [
+        AppLocalizations.of(context)!.physicalTherapist,
+        AppLocalizations.of(context)!.occupationalTherapist,
+        AppLocalizations.of(context)!.speechLanguageHearingTherapist,
+        AppLocalizations.of(context)!.prosthetistAndOrthotist,
+        AppLocalizations.of(context)!.anmaMassageShiatsuPractitioner,
+        AppLocalizations.of(context)!.judoTherapist,
+        AppLocalizations.of(context)!.acupuncturistAndMoxibustionTherapist
+      ],
+      AppLocalizations.of(context)!.diagnosticAndSupportTechnicians: [
+        AppLocalizations.of(context)!.clinicalLaboratoryTechnician,
+        AppLocalizations.of(context)!.radiologicalTechnologist,
+        AppLocalizations.of(context)!.clinicalEngineer,
+        AppLocalizations.of(context)!.dentalHygienist,
+        AppLocalizations.of(context)!.dentalTechnician,
+        AppLocalizations.of(context)!.orthoptist,
+        AppLocalizations.of(context)!.emergencyMedicalTechnician
+      ],
+      AppLocalizations.of(context)!.mentalHealthAndWelfare: [
+        AppLocalizations.of(context)!.mentalHealthSocialWorker,
+        AppLocalizations.of(context)!.certifiedPsychologist,
+        AppLocalizations.of(context)!.certifiedCareWorker
+      ],
+    };
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -105,6 +115,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
                   builder: (context) => CourseDetailScreen(
                     category: category,
                     profession: profession,
+                    language: AppLocalizations.of(context)!.localeName, // 'language' パラメータを追加
                   ),
                 ),
               );
