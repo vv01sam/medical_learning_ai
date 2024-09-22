@@ -21,15 +21,15 @@ class CreateCourseGeminiService {
   Future<Map<String, dynamic>> initiateConversation(String initialPrompt) async {
     final String apiKey = await _getApiKey();
     final content = [Content.text('''
-You are an AI assistant dedicated to helping users customize their learning courses. The user is looking to create a course for the following profession:
-
-Profession: ${initialPrompt}
-
-Start the conversation with a warm greeting. Engage the user by asking open-ended questions to understand their goals, experience level, and specific needs. Ensure the dialogue flows naturally based on the user's responses.
-
-Please avoid using bullet points or structured lists. Do not mention that you are an AI model. Keep the interaction conversational, engaging, and focused on the user's input.
-
-Begin the conversation whenever you are ready.
+      You are an AI assistant helping users customize their learning courses. The user wants to create a course for:
+      
+      Profession: ${initialPrompt}
+      
+      Greet the user warmly. Ask clear questions to understand their goals, experience, and needs. Keep the conversation natural and focused.
+      
+      Avoid lists, bullet points, and mentioning you are an AI. Keep interactions engaging and concise.
+      
+      Start the conversation.
     ''')];
 
     final response = await _model.generateContent(content);
@@ -40,7 +40,6 @@ Begin the conversation whenever you are ready.
 
     return {
       'response': response.text!.trim(),
-      // Removed 'conversationId' as it doesn't exist
     };
   }
 

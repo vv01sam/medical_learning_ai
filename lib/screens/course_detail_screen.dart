@@ -23,6 +23,9 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   List<String> _userResponses = [];
   final MedlmService _medlmService = MedlmService();
 
+  // カスタムコースが作成されたかどうかを示すフラグ
+  bool _isCourseCreated = false;
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +59,9 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   }
 
   Future<void> _sendMessage(String message) async {
+    // カスタムコースが既に作成されている場合は処理を行わない
+    if (_isCourseCreated) return;
+
     setState(() {
       _messages.add({'user': message});
       _isLoading = true;
@@ -63,18 +69,18 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       _userResponses.add(message); // Store the user's response
     });
     try {
+      // Check if the user has responded twice
+      if (_userResponseCount >= 2) {
+        await _createCustomCourse(); // Create the custom course
+        return; // 以降の処理を行わない
+      }
+
       String response = await _geminiService.sendMessage(message);
       setState(() {
         _messages.add({'gemini': response});
       });
       // Generate suggested responses
       await _generateAndAddSuggestedResponses(response);
-
-      // Check if the user has responded twice
-      if (_userResponseCount >= 2) {
-        await _createCustomCourse(); // Create the custom course
-      }
-
     } catch (e) {
       // Handle error appropriately
       print(e);
@@ -98,8 +104,9 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     try {
       // Pass the user's responses to the MedlmService
       await _medlmService.createCourse(_userResponses);
-      // Notify the user
+      // カスタムコース作成フラグを設定
       setState(() {
+        _isCourseCreated = true;
         _messages.add({
           'gemini': 'Your custom course has been created and added to your courses!'
         });

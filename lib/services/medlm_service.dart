@@ -9,15 +9,15 @@ class MedlmService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirestoreService _firestoreService = FirestoreService();
 
-  // Initialize MedLM model with GenerationConfig
-  final GenerativeModel _medlmModel;
+  // Initialize the GenerativeModel with 'gemini-1.5-flash'
+  final GenerativeModel _model;
 
-  // Add a field to store the number of cards to generate
+  // The number of cards to generate
   final int _numberOfCards = 10;
 
   MedlmService()
-      : _medlmModel = FirebaseVertexAI.instance.generativeModel(
-          model: 'med-palm-2', // Update model if needed
+      : _model = FirebaseVertexAI.instance.generativeModel(
+          model: 'gemini-1.5-flash',
           generationConfig: GenerationConfig(
             maxOutputTokens: 512,
             temperature: 0.7,
@@ -36,7 +36,7 @@ class MedlmService {
     }
   }
 
-  // Method to create a custom course using MedLM
+  // Method to create a custom course using the model
   Future<void> createCourse(List<String> userResponses) async {
     // Generate course metadata
     Map<String, dynamic> courseMetadata = await _generateCourseMetadata(userResponses);
@@ -67,7 +67,6 @@ class MedlmService {
       'title': courseMetadata['title'],
       'description': courseMetadata['description'],
       'language': courseMetadata['language'],
-      // Include any other necessary fields
     });
 
     // Save the personalized cards to user's progress
@@ -76,7 +75,6 @@ class MedlmService {
 
   // Method to generate course metadata
   Future<Map<String, dynamic>> _generateCourseMetadata(List<String> userResponses) async {
-    // Combine user responses into a single prompt
     String userNeeds = userResponses.join(' ');
 
     final content = [
@@ -109,11 +107,11 @@ Begin output:
 '''),
     ];
 
-    // Generate the content using MedLM
-    final response = await _medlmModel.generateContent(content);
+    // Generate the content using the model
+    final response = await _model.generateContent(content);
 
     if (response.text == null) {
-      throw Exception('Failed to generate course metadata using MedLM');
+      throw Exception('Failed to generate course metadata using the model');
     }
 
     // Parse the JSON string into a Map
@@ -148,7 +146,6 @@ Begin output:
   // Method to generate a single course card
   Future<Map<String, dynamic>> _generateCourseCard(
       List<String> userResponses, int cardNumber) async {
-    // Combine user responses into a single prompt
     String userNeeds = userResponses.join(' ');
 
     final content = [
@@ -187,11 +184,11 @@ Begin output:
 '''),
     ];
 
-    // Generate the content using MedLM
-    final response = await _medlmModel.generateContent(content);
+    // Generate the content using the model
+    final response = await _model.generateContent(content);
 
     if (response.text == null) {
-      throw Exception('Failed to generate course card using MedLM');
+      throw Exception('Failed to generate course card using the model');
     }
 
     // Parse the JSON string into a Map
@@ -217,8 +214,7 @@ Begin output:
   Future<void> saveCourse(Map<String, dynamic> courseMap) async {
     // Generate a unique deck ID if not provided
     if (courseMap['deck_id'] == null || courseMap['deck_id'].isEmpty) {
-      courseMap['deck_id'] =
-          'custom_course_${DateTime.now().millisecondsSinceEpoch}';
+      courseMap['deck_id'] = 'custom_course_${DateTime.now().millisecondsSinceEpoch}';
     }
     // Save the course data to the 'decks' collection
     Map<String, dynamic> courseData = Map.from(courseMap);
@@ -227,12 +223,9 @@ Begin output:
   }
 
   // Save personalized cards to the user's progress and the decks collection
-  Future<void> _savePersonalizedCards(
-      String userId, Map<String, dynamic> courseMap) async {
-    // Extract cards from the course map
+  Future<void> _savePersonalizedCards(String userId, Map<String, dynamic> courseMap) async {
     List<dynamic> cardsData = courseMap['cards'];
     List<CardModel> cards = cardsData.map((cardData) {
-      // Generate a unique ID for the card if not provided
       String cardId = _firestoreService.generateDocumentId('cards');
       return CardModel.fromMap(cardId, courseMap['deck_id'], cardData);
     }).toList();
