@@ -144,7 +144,10 @@ class _CourseListScreenState extends State<CourseListScreen> {
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: courses.length,
                 itemBuilder: (context, index) {
-                  var course = courses[index];
+                  var courseSnapshot = courses[index];
+                  var deck = courseSnapshot.data() as Map<String, dynamic>;
+                  deck['id'] = courseSnapshot.id; // ドキュメントIDをデッキデータに追加
+
                   return Card(
                     margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     elevation: 2,
@@ -156,21 +159,21 @@ class _CourseListScreenState extends State<CourseListScreen> {
                         backgroundColor:
                             Theme.of(context).colorScheme.secondary,
                         child: Text(
-                          course['title'][0].toUpperCase(),
+                          deck['title'][0].toUpperCase(),
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold),
                         ),
                       ),
                       title: Text(
-                        course['title'],
+                        deck['title'],
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Text(course['description'] ??
+                      subtitle: Text(deck['description'] ??
                           AppLocalizations.of(context)!.noDescription),
                       trailing: Icon(Icons.add_circle,
                           color: Theme.of(context).colorScheme.primary),
-                      onTap: () => _showCourseDialog(course.data() as Map<String, dynamic>),
+                      onTap: () => _showCourseDialog(deck),
                     ),
                   );
                 },

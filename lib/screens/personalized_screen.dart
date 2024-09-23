@@ -207,11 +207,61 @@ class _PersonalizedScreenState extends State<PersonalizedScreen> {
     }
   }
 
-  void _handleUserAnswer() {
-    // 実装内容...
-  }
+  void _handleUserAnswer() async {
+    if (_textController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.pleaseEnterAnswer)),
+      );
+      return;
+    }
 
-  // 他のウィジェットやメソッド...
+    setState(() {
+      _isLoading = true;
+    });
+
+    String userAnswer = _textController.text;
+    _conversationHistory.add(userAnswer);
+    _textController.clear();
+
+    try {
+      // ユーザーの回答から話題を抽出
+      String extractedTopic = await _geminiService.extractTopics(
+        userAnswer,
+        _selectedInterests.join(', '),
+      );
+
+      // 次の質問を生成
+      String language = Localizations.localeOf(context).languageCode;
+      String nextQuestion = await _geminiService.generatePersonalizedQuestion(
+        widget.deckId,
+        _selectedInterests.join(', '),
+        userAnswer,
+        extractedTopic,
+        _questions,
+        language,
+      );
+
+      setState(() {
+        _questions.add(nextQuestion);
+        _slideIndex = _questions.length - 1;
+        _conversationStage++;
+
+        if (_conversationStage > _maxConversationStages) {
+          // パーソナライズされたデッキの表示や次の画面への遷移をここで実装
+          // 例: Navigator.push(...)
+        }
+      });
+    } catch (e) {
+      print('Error handling user answer: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.errorOccurred)),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

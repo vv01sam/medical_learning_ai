@@ -235,6 +235,11 @@ abstract class AppLocalizations {
   String get viewCourseListButton;
 
   // ... 既存のコード ...
+
+  // 新しいプロパティ
+  String get pleaseEnterAnswer;
+
+  // ... 既存のコード ...
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

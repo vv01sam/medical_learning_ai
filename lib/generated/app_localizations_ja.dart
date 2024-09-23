@@ -323,4 +323,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get courseCreatedMessage => 'カスタムコースが作成され、コース一覧に追加されました！';
   @override
   String get viewCourseListButton => 'コース一覧を見る';
+
+  @override
+  String get pleaseEnterAnswer => '回答を入力してください。';
 }

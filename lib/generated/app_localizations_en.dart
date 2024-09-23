@@ -328,4 +328,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get viewCourseListButton => 'View Course List';
 
+  @override
+  String get pleaseEnterAnswer => 'Please enter an answer.';
 }
